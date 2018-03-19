@@ -20,7 +20,9 @@ import codecs
 # ------------------------------------------
 def my_map(input_stream, per_language_or_project, output_stream):
     list_of_tuples = []
+    projVal = ()
     total = 0
+    fullStop = "."
 
     if per_language_or_project == True:
         for text_line in input_stream:
@@ -30,9 +32,28 @@ def my_map(input_stream, per_language_or_project, output_stream):
             total = total + view
             langSplit = langs.split('.')
             lang = langSplit[0]
-            view = int(word_list[2])
             projVal = lang, view
             list_of_tuples.append(projVal)
+
+    if per_language_or_project == False:
+        for text_line in input_stream:
+            word_list = text_line.split(' ')
+            langs = word_list[0]
+            view = int(word_list[2])
+            total = total + view
+            if fullStop in langs:
+                langSplit = langs.split('.', 1)[1]
+                if fullStop in langSplit:
+                    proj = langSplit.split('.', 1)[0]
+                    projVal = proj, view
+                    list_of_tuples.append(projVal)
+                else:
+                    projVal = langSplit, view
+                    list_of_tuples.append(projVal)
+            else:
+                langSplit = "wikipedia"
+                projVal = langSplit, view
+                list_of_tuples.append(projVal)
 
     sorted_list = sorted(list_of_tuples, key=lambda x: (x[0], x[1]), reverse=True)
 
